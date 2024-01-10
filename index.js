@@ -2,6 +2,7 @@ class HashMap{
     constructor(name){
         this.name = name;
         this.buckets = Array(16).fill(null).map(()=>[]);
+        this.loadFactor = 0.75;
     }
 
     hash(string){
@@ -15,10 +16,29 @@ class HashMap{
         return hashCode;
     }
 
+    loadFactorCheck(){
+        if(this.loadFactor < (this.length() / this.buckets.length)){
+            this.rehash();
+            return;
+        }else{
+            return;
+        }
+    }
+
+    rehash(){
+        let entries = this.entries();
+        this.buckets = Array(this.buckets.length*2).fill(null).map(()=>[]);
+        entries.forEach((entry) => {
+            this.set(entry[0], entry[1]);
+        })
+    }
+
     set(key, value){
         let newNode = new Node(key, value);
         let hashCode = this.hash(key);
         let index = hashCode % this.buckets.length;
+
+        this.loadFactorCheck();
 
         if (index < 0 || index >= this.buckets.length) {
             throw new Error("Trying to access index out of bound");
@@ -161,6 +181,26 @@ class HashMap{
     }
 
     //method: entries
+    entries(){
+        let outputArray = [];
+        let currentNode = null;
+
+        this.buckets.forEach((bucket) => {
+            if (bucket[0]){
+                currentNode = bucket[0];
+                while (currentNode !== null){
+                    outputArray.push([currentNode.key, currentNode.value])
+                    currentNode = currentNode.nextNode;
+                }
+            }
+        })
+
+        return outputArray;
+    }
+
+    grow(){
+
+    }
 }
 
 
@@ -178,9 +218,14 @@ testHash.set('dave', 1);
 testHash.set('betty', 25);
 testHash.set('frank', 27);
 testHash.set('david', 29);
-console.log(testHash.length())
-console.log(testHash.keys());
-console.log(testHash.values());
-
-// testHash.remove('test');
+testHash.set('crack', 30);
+testHash.set('donny', 1);
+testHash.set('bruiser', 25);
+testHash.set('patrick', 27);
+testHash.set('john', 29);
+testHash.set('elaine', 30);
+testHash.set('newman', 1);
+testHash.set('jerry', 25);
+testHash.set('kramer', 27);
+testHash.set('george', 29);
 

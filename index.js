@@ -4,7 +4,6 @@ class HashMap{
         this.buckets = Array(16).fill(null).map(()=>[]);
     }
 
-    //method: hash
     hash(string){
         let hashCode = 0;
 
@@ -16,15 +15,10 @@ class HashMap{
         return hashCode;
     }
 
-
-
-    //method: set
     set(key, value){
         let newNode = new Node(key, value);
         let hashCode = this.hash(key);
         let index = hashCode % this.buckets.length;
-
-
 
         if (index < 0 || index >= this.buckets.length) {
             throw new Error("Trying to access index out of bound");
@@ -52,21 +46,119 @@ class HashMap{
 
     }
 
+    get(key){
+        let hashCode = this.hash(key);
+        let index = hashCode % this.buckets.length;
 
-    //method: get
-    
+        if (index < 0 || index >= this.buckets.length) {
+            throw new Error("Trying to access index out of bound");
+        }
 
-    //method: has
+        let currentNode = this.buckets[index][0];
 
-    //method: remove
+        while(currentNode !== null){
+            if(currentNode.key === key){
+                return currentNode.value;
+            }else{
+                currentNode = currentNode.nextNode;
+            }
+        }
+        return null;
+    }
 
-    //method: length
+    has(key){
+        if (this.get(key) === null){
+            return false;
+        }else{
+            return true;
+        }
+    }
 
-    //method: clear
+    remove(key){
+        let hashCode = this.hash(key);
+        let index = hashCode % this.buckets.length;
 
-    //method: keys
+        if (index < 0 || index >= this.buckets.length) {
+            throw new Error("Trying to access index out of bound");
+        }
 
-    //method: values
+        let parentNode = null;
+        let currentNode = this.buckets[index][0];
+
+        while(currentNode !== null){
+            if(currentNode.key === key){
+                if(currentNode === this.buckets[index][0]){
+                    this.buckets[index].push(currentNode.nextNode);
+                    this.buckets[index].shift();
+                    console.log(this.buckets);
+                    return;
+                }else{
+                    parentNode.nextNode = currentNode.nextNode;
+                    console.log(this.buckets);
+                    return;
+                }
+            }else{
+                parentNode = currentNode;
+                currentNode = currentNode.nextNode;
+            }
+        }
+        return;
+    }
+
+    length(){
+        let counter = 0;
+        let currentNode = null;
+
+        this.buckets.forEach((bucket) => {
+            if (bucket[0]){
+                currentNode = bucket[0];
+                while (currentNode !== null){
+                    counter += 1;
+                    currentNode = currentNode.nextNode;
+                }
+            }
+        })
+
+        return counter;
+    }
+
+    clear(){
+        this.buckets = Array(16).fill(null).map(()=>[]);
+    }
+
+    keys(){
+        let outputArray = [];
+        let currentNode = null;
+
+        this.buckets.forEach((bucket) => {
+            if (bucket[0]){
+                currentNode = bucket[0];
+                while (currentNode !== null){
+                    outputArray.push(currentNode.key)
+                    currentNode = currentNode.nextNode;
+                }
+            }
+        })
+
+        return outputArray;
+    }
+
+    values(){
+        let outputArray = [];
+        let currentNode = null;
+
+        this.buckets.forEach((bucket) => {
+            if (bucket[0]){
+                currentNode = bucket[0];
+                while (currentNode !== null){
+                    outputArray.push(currentNode.value)
+                    currentNode = currentNode.nextNode;
+                }
+            }
+        })
+
+        return outputArray;
+    }
 
     //method: entries
 }
@@ -81,6 +173,14 @@ class Node{
 }
 
 const testHash = new HashMap('test');
-let testNode = new Node('test', 20);
-testHash.buckets[2].push(testNode);
 testHash.set('test', 30);
+testHash.set('dave', 1);
+testHash.set('betty', 25);
+testHash.set('frank', 27);
+testHash.set('david', 29);
+console.log(testHash.length())
+console.log(testHash.keys());
+console.log(testHash.values());
+
+// testHash.remove('test');
+
